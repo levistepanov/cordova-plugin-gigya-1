@@ -37,7 +37,7 @@ typedef void(^ _Nullable GSResponseHandler)(GSResponse * _Nullable response, NSE
  @param method The API method.
  @returns A new `GSRequest` object for the method.
  */
-+ (GSRequest *)requestForMethod:(NSString * _Nonnull)method;
++ (GSRequest * _Nonnull)requestForMethod:(NSString * _Nonnull)method;
 
 /*!
  Creates a `GSRequest` object for a given method and parameters.
@@ -46,7 +46,7 @@ typedef void(^ _Nullable GSResponseHandler)(GSResponse * _Nullable response, NSE
  @param parameters A dictionary of parameters to pass to the method.
  @returns A new `GSRequest` object for the method and parameters.
  */
-+ (GSRequest *)requestForMethod:(NSString * _Nonnull)method parameters:(NSDictionary * _Nullable)parameters;
++ (GSRequest * _Nonnull)requestForMethod:(NSString * _Nonnull)method parameters:(NSDictionary * _Nullable)parameters;
 
 /*!
  The API method name.
@@ -82,9 +82,9 @@ typedef void(^ _Nullable GSResponseHandler)(GSResponse * _Nullable response, NSE
  */
 - (void)cancel;
 
-@property (nonatomic, strong) GSSession *session;
-@property (nonatomic, strong, readonly) NSString *requestID;
+@property (nonatomic, strong) GSSession * _Nullable session;
+@property (nonatomic, strong, readonly) NSString * _Nonnull requestID;
 @property (nonatomic) BOOL includeAuthInfo;
-@property (nonatomic, copy) NSString *source;
+@property (nonatomic, copy) NSString * _Nonnull source;
 
 @end

@@ -42,11 +42,10 @@
  @param logInfo The log entry info object. possible values: debug, info, warn, error.
  */
 - (void)webView:(id)webView receivedJsLog:(NSString *)logType logInfo:(NSDictionary *)logInfo;
-
 @end
 
 /** `GSWebBridge` connects between the Gigya JavaScript SDK and the Gigya iOS SDK. 
- Any `UIWebView` can be registered to use the web bridge. Doing this gives the following benefits:
+ Any `WKWebView` can be registered to use the web bridge. Doing this gives the following benefits:
  
  - Session state will be synchronized. If the user is logged in and the session is active in the iOS SDK - he will be automatically logged in in the JS SDK.
  - Any API requests by the JS SDK will be routed through the iOS SDK, using the iOS SDK session.
@@ -58,7 +57,7 @@
  
        [GSWebBridge registerWebView:webView delegate:self];
  
- 2. Add the following code to your `UIWebViewDelegate` implementation:
+ 2. Add the following code to your `WKWebViewDelegate` implementation:
     a. In the beginning of `webView:shouldStartLoadWithRequest:navigationType:`:
         
            if ([GSWebBridge handleRequest:request webView:webView]) {
@@ -78,7 +77,7 @@
 /** @name Registering a Web View */
 
 /**
- Registers a web view to the web bridge. This method should be called before calling `UIWebView`'s `loadRequest:`.
+ Registers a web view to the web bridge. This method should be called before calling `WKWebView`'s `loadRequest:`.
  
  @param webView A web view.
  @param delegate A delegate to be notified with `GSWebBridge` events.
@@ -87,7 +86,7 @@
 + (void)registerWebView:(id)webView delegate:(id<GSWebBridgeDelegate>)delegate;
 
 /**
- Registers a web view to the web bridge. This method should be called before calling `UIWebView`'s `loadRequest:`.
+ Registers a web view to the web bridge. This method should be called before calling `WKWebView`'s `loadRequest:`.
  
  @param webView A web view.
  @param delegate A delegate to be notified with `GSWebBridge` events.
@@ -106,14 +105,14 @@
 /** @name Routing Requests to the Web Bridge */
 
 /**
- Notifies the web bridge that a registered web view has started loading. Should be called in `UIWebViewDelegate`'s `webViewDidStartLoad:`.
+ Notifies the web bridge that a registered web view has started loading. Should be called in `WKWebViewDelegate`'s `webViewDidStartLoad:`.
  
  @param webView A web view that has already registered using `registerWebView:delegate:`.
  */
 + (void)webViewDidStartLoad:(id)webView;
 
 /**
- Routes a request from a registered web view. Should be called in `UIWebViewDelegate`'s `webView:shouldStartLoadWithRequest:navigationType:`.
+ Routes a request from a registered web view. Should be called in `WKWebViewDelegate`'s `webView:shouldStartLoadWithRequest:navigationType:`.
  
  @param request The request object as passed in `webView:shouldStartLoadWithRequest:navigationType:`.
  @param webView A web view that has already registered using `registerWebView:delegate:`.

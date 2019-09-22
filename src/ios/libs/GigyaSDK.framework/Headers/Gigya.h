@@ -17,6 +17,7 @@
 #import "GSAccountsDelegate.h"
 #import "GSWebBridge.h"
 #import "GSPluginView.h"
+#import "GSLogger.h"
 
 // External SDKs
 #if defined(__has_include)
@@ -37,7 +38,7 @@
 #endif
 
 // Consts
-static NSString * _Nonnull const GSGigyaSDKVersion = @"iOS_3.6.0";
+static NSString * _Nonnull const GSGigyaSDKVersion = @"iOS_3.7.1";
 static NSString * _Nonnull const GSDefaultAPIDomain = @"us1.gigya.com";
 static NSString * _Nonnull const GSGigyaSDKDomain = @"com.gigya.GigyaSDK";
 static NSString * _Nonnull const GSInvalidOperationException = @"com.gigya.GigyaSDK:InvalidOperationException";
@@ -126,6 +127,7 @@ typedef void(^GSGetSessionCompletionHandler)(GSSession * _Nullable session);
 
 /** GigyaSDK */
 @interface Gigya : NSObject
+NS_ASSUME_NONNULL_BEGIN
 
 /** @name Setting Up GigyaSDK */
 
@@ -135,7 +137,7 @@ typedef void(^GSGetSessionCompletionHandler)(GSSession * _Nullable session);
  @param application The application parameter provided by the AppDelegate.
  @param launchOptions The launchOptions parameter provided by the AppDelegate.
  */
-+ (void)initWithAPIKey:(NSString *)apiKey application:(UIApplication *)application launchOptions:(NSDictionary *)launchOptions;
++ (void)initWithAPIKey:(NSString * _Nullable)apiKey application:(UIApplication * _Nullable)application launchOptions:(NSDictionary * _Nullable)launchOptions;
 
 /*!
  Initializes the Gigya SDK and sets your partner API key.
@@ -144,17 +146,17 @@ typedef void(^GSGetSessionCompletionHandler)(GSSession * _Nullable session);
  @param launchOptions The launchOptions parameter provided by the AppDelegate.
  @param apiDomain Your partner API domain.
  */
-+ (void)initWithAPIKey:(NSString *)apiKey application:(UIApplication *)application launchOptions:(NSDictionary *)launchOptions APIDomain:(NSString *)apiDomain;
++ (void)initWithAPIKey:(NSString * _Nullable)apiKey application:(UIApplication * _Nullable)application launchOptions:(NSDictionary * _Nullable)launchOptions APIDomain:(NSString * _Nullable)apiDomain;
 
 /*!
  Your partner API key.
  */
-+ (NSString *)APIKey;
++ (NSString * _Nonnull)APIKey;
 
 /*!
  Your partner API domain. All Gigya requests will use this as base domain. Default value is `gigya.com`.
  */
-+ (NSString *)APIDomain;
++ (NSString * _Nullable)APIDomain;
 
 /*!
  Retrieves the current Gigya session, or `nil` if not connected.
@@ -177,7 +179,10 @@ typedef void(^GSGetSessionCompletionHandler)(GSSession * _Nullable session);
  
  @param session A new Gigya session, with valid session token and session secret.
  */
+
 + (void)setSession:(GSSession * _Nullable)session;
+
++ (void)setKeyStoreTimeout:(int)timeout;
 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 + (id<GSSessionDelegate>)sessionDelegate;
@@ -436,12 +441,12 @@ typedef void(^GSGetSessionCompletionHandler)(GSSession * _Nullable session);
  @param handler A completion handler that will be invoked when adding the connection is finished. The handler should have the signature `(GSUser *user, NSError *error)`. If the connection was added successfully, the `error` parameter will be `nil`. Otherwise, you can check the `error.code` (see `GSErrorCode`) or `error.userInfo` to learn why it failed.
  */
 + (void)addConnectionToProvider:(NSString *)provider
-                     parameters:(NSDictionary *)parameters
-              completionHandler:(GSUserInfoHandler)handler;
+                     parameters:(NSDictionary * _Nullable)parameters
+              completionHandler:(nullable GSUserInfoHandler)handler;
 + (void)showAddConnectionDialogOver:(UIViewController *)viewController
                            provider:(NSString *)provider
-                         parameters:(NSDictionary *)parameters
-                  completionHandler:(GSUserInfoHandler)handler __attribute((deprecated("Use addConnectionToProvider:parameters:completionHandler: instead")));
+                         parameters:(NSDictionary * _Nullable)parameters
+                  completionHandler:(nullable GSUserInfoHandler)handler __attribute((deprecated("Use addConnectionToProvider:parameters:completionHandler: instead")));
 
 /*!
  Logs in the user with the specified provider. When the user completes the login process, Gigya will associate the connection with the user's account.
@@ -464,9 +469,9 @@ typedef void(^GSGetSessionCompletionHandler)(GSSession * _Nullable session);
  @param handler A completion handler that will be invoked when adding the connection is finished. The handler should have the signature `(GSUser *user, NSError *error)`. If the connection was added successfully, the `error` parameter will be `nil`. Otherwise, you can check the `error.code` (see `GSErrorCode`) or `error.userInfo` to learn why it failed.
  */
 + (void)addConnectionToProvider:(NSString *)provider
-                     parameters:(NSDictionary *)parameters
-                           over:(UIViewController *)viewController
-              completionHandler:(GSUserInfoHandler)handler;
+                     parameters:(NSDictionary * _Nullable)parameters
+                           over:(UIViewController * _Nullable)viewController
+              completionHandler:(nullable GSUserInfoHandler)handler;
 
 /*!
  Displays a provider selection dialog, allowing the user to connect to any of the supported providers. When the user completes the login process, Gigya will associate the connection with the user's account.
@@ -581,7 +586,7 @@ typedef void(^GSGetSessionCompletionHandler)(GSSession * _Nullable session);
  @param plugin A plugin name of a supported plugin, see <GSPluginView> for a list.
  @param parameters The parameters passed to the plugin.
  */
-+ (void)showPluginDialogOver:(UIViewController *)viewController
++ (void)showPluginDialogOver:(UIViewController * _Nullable)viewController
                       plugin:(NSString *)plugin
                   parameters:(NSDictionary *)parameters;
 
@@ -593,10 +598,10 @@ typedef void(^GSGetSessionCompletionHandler)(GSSession * _Nullable session);
  @param parameters The parameters passed to the plugin.
  @param handler A handler that will be invoked when the dialog is dismissed. The handler should have the signature `(BOOL closedByUser, NSError *error)`.
  */
-+ (void)showPluginDialogOver:(UIViewController *)viewController
++ (void)showPluginDialogOver:(UIViewController * _Nullable)viewController
                       plugin:(NSString *)plugin
                   parameters:(NSDictionary *)parameters
-           completionHandler:(GSPluginCompletionHandler)handler;
+           completionHandler:(nullable GSPluginCompletionHandler)handler;
 
 /*!
  Uses <GSPluginView> to render Gigya <a target="_blank" href="http://developers.gigya.com/display/GD/Plugins">JS Plugins</a> and display them modally.
@@ -608,11 +613,11 @@ typedef void(^GSGetSessionCompletionHandler)(GSSession * _Nullable session);
  @param delegate A delegate object that will receive plugin events.
  @see GSPluginView, GSPluginViewDelegate
  */
-+ (void)showPluginDialogOver:(UIViewController *)viewController
++ (void)showPluginDialogOver:(UIViewController * _Nullable)viewController
                       plugin:(NSString *)plugin
                   parameters:(NSDictionary *)parameters
-           completionHandler:(GSPluginCompletionHandler)handler
-                    delegate:(id<GSPluginViewDelegate>)delegate;
+           completionHandler:(nullable GSPluginCompletionHandler)handler
+                    delegate:(nullable id<GSPluginViewDelegate>)delegate;
 
 /** @name Requesting Additional Facebook Permissions */
 
@@ -728,6 +733,7 @@ typedef void(^GSGetSessionCompletionHandler)(GSSession * _Nullable session);
 
 + (void)__setDebugOptionEnableTestNetworks:(BOOL)debugOptionEnableTestNetworks;
 
+NS_ASSUME_NONNULL_END
 @end
 
 

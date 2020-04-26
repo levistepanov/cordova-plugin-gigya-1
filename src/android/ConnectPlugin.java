@@ -21,6 +21,10 @@ public class ConnectPlugin extends CordovaPlugin {
             executeInit(args);
             return true;
         }
+        if (action.equals("obfuscate")) {
+            obfuscate(args);
+            return true;
+        }
         if (action.equals("registerToGlobalEvents")) {
             registerToGlobalEvents(callbackContext);
             return true;
@@ -54,6 +58,12 @@ public class ConnectPlugin extends CordovaPlugin {
         GSAPI.getInstance().initialize(cordova.getActivity().getApplicationContext(), apiKey, apiDomain);
     }
 
+    private void obfuscate(JSONArray args) throws JSONException {
+        boolean enable = args.getBoolean(0);
+        
+        GSAPI.OPTION_OBFUSCATION_ENABLED = true;
+    }
+ 
     private void executeSendRequest(JSONArray args, final CallbackContext callbackContext) throws JSONException {
         String method = args.getString(0);
         GSObject params = getGSObjectFromJSONString(args.getString(1));
